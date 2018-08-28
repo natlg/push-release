@@ -39,8 +39,7 @@ morganBody(app);
 // validate secret for every request
 app.use((req, res, next) => {
 	if (keccak256(req.body.secret || '') !== secretHash) {
-		//next(boom.unauthorized('Invalid secret'));
-		next();
+		next(boom.unauthorized('Invalid secret'));
 	} else {
 		next();
 	}
@@ -61,7 +60,7 @@ const baseUrl = config.get('assetsBaseUrl');
 const secretHash = config.get('secretHash');
 const githubRepo = config.get('repository');
 
-const operationsContract = api.util.sha3('operationsproxy'); //0x760526ad131d94f10ee75b247d523cf79f647a5ca5f1c06321d4ff9595c289f7
+const operationsContract = api.util.sha3('operationsproxy');
 const githubHint = api.util.sha3('githubhint');
 
 const RegistrarABI = require('./res/registrar.json');
@@ -155,8 +154,6 @@ app.post('/push-build/:tag/:platform', validateBuild, handleAsync(async function
 	const url = `${baseUrl}/${tag}/${platform}/${filename}`;
 
 	const out = `BUILD: ${platform}/${commit} -> ${sha3}/${tag}/${filename} [${url}]`;
-
-	console.log("url to save in githubhint: " + url);
 	console.log(out);
 
 	const meta = await readParityMetadata(commit);
