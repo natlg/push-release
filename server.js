@@ -61,7 +61,7 @@ const baseUrl = config.get('assetsBaseUrl');
 const secretHash = config.get('secretHash');
 const githubRepo = config.get('repository');
 
-const operationsContract = api.util.sha3('operations');
+const operationsContract = api.util.sha3('operationsproxy'); //0x760526ad131d94f10ee75b247d523cf79f647a5ca5f1c06321d4ff9595c289f7
 const githubHint = api.util.sha3('githubhint');
 
 const RegistrarABI = require('./res/registrar.json');
@@ -117,9 +117,12 @@ app.post('/push-release/:tag/:commit', validateRelease, handleAsync(async functi
 	const [major, minor, patch] = versionMatch.map(x => parseInt(x, 10));
 	const semver = major * 65536 + minor * 256 + patch;
 
+	console.log(`meta.version: ${meta.version} `);
 	console.log(`Version: ${versionMatch.join('.')} = ${semver}`);
 
 	const registryAddress = await api.parity.registryAddress();
+	console.log("registryAddress: " + registryAddress);
+	console.log("operationsContract name hash: " + operationsContract);
 	const registry = api.newContract(RegistrarABI, registryAddress);
 
 	console.log(`Registering release commit: 0x000000000000000000000000${commit}, forkSupported: ${forkSupported}, track: ${tracks[track]}, semver: ${semver}, critical: ${networkSettings.critical}`);
